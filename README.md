@@ -75,6 +75,7 @@ If you see the above output, you can safely rest assure that your jetson and bas
 
 Now that both our jetson nano and the base station(laptop) are in the same network,
 we can access the jetson(that is situated in the rover) by a process called 'ssh'
+
 WRITE THIS IN YOUR TERMINAL:
 
 ```bash
