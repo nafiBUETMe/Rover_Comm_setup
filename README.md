@@ -2,7 +2,7 @@
 
 This `README.md` file goes through the steps needed to setup communication between Jetson nano i.e. rover and a laptop i.e. base station.
 
-We use ROCKER M2 router for communication in both rover and the antenna.
+We use ROCKER M2 router for communication in both rover and the ground station.
 
 .
 
