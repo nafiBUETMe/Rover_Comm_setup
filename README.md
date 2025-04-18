@@ -1,34 +1,52 @@
-# Rover's Communication Setup Guideline
+# Communication Setup Guideline for Rocket M2
 
-This `README.md` file goes through the steps needed to setup communication between Jetson nano i.e. rover and a laptop i.e. base station.
+This file goes through the steps needed to setup communication between the rover i.e. the Jetson, and the base station i.e. an Ubuntu laptop.
 
-We use ROCKER M2 router for communication in both rover and the ground station.
+We primarily use ROCKET M2 routers for communication between the rover and the ground station.
 
-.
+## 🔨 Required Hardware 
 
-.
+- Rocket M2s
+- PoE supported ethernet cables
+- Ethernet LAN cables
+- Adapters for the Rocket M2s
+- Antennas (sector/omnidirectional/dipole)
+- USB to Ethernet adapter (if the base station laptop has no LAN port)
 
-The ash colored long ethernet cable(aka POE- Power Over Ethernet) is always connected to the ROCKET M2 router and the white comparatively small ethernet cable is connected to laptop(in case of base station sector antenna) or jetson nano(in case of rover).
+## ⚙️ Configuration
 
-Whenever testing the rover using communication setup, make sure that both the ROCKET M2 is at least connected to dipole antenna or better if their respective sector/omnidirectional antenna. But at least one antenna should stay connnected to the router all the time during testing.
+The long gray ethernet cable that supports PoE (Power over Ethernet) is always connected to the ROCKET M2 router and the white smaller LAN cable is connected to the laptop (in case of the base station sector antenna) or the Jetson (in case of the rover).
 
-After connecting the wires properly to the base station antenna and the laptop, we need to configure our network settings(you need to repeat the same steps in nano after connecting wires properly to the jetson and ROCKET M2 router):
+Whenever testing the rover using this communication setup, make sure that both the ROCKET M2 are connected to an antenna (at least connected to dipole antenna or better if their respective sector/omnidirectional antenna). But at least one antenna should stay connnected to the router all the time during any operation.
+
+
+## 🛜 IPv4 Configuration
+After connecting the wires properly to the base station antenna and the laptop, we need to configure our network settings (you need to repeat the same steps in the Jetson after connecting wires properly to the jetson and ROCKET M2 router):
 
 ![Terminal Preview](rover-communication_setup/assets/ethernet_config2.png)
 
-By default, IPv4 Method will be set to 'Automatic(DHCP)', we need to select 'manual'
+- Go to Network settings -> Wired connection -> ⚙️ (Settings)
+- Go to the IPv4 tab
+- By default, IPv4 Method will be set to 'Automatic(DHCP)', we need to select 'Manual'.
+- We need to type the Addresses. In the **Adrress** type `192.168.1.100` in case of base station. For the Jetson, set it to `192.168.1.2`.
+- Netmask is `255.255.255.0` same for both laptop and jetson.
 
-And  we need to type the Addresses.
-In the **Adrress** type `192.168.1.100` in case of base station. The same thing when dealing with jetson is `192.168.1.2`
+**Rover IP**
+| IP address      | Netmask      | 
+|---------------|---------------|
+| 192.168.1.2  | 255.255.255.0  |
 
-Netmask is `255.255.255.0` same for both laptop and jetson.
+**Base Station IP**
+| IP address      | Netmask      | 
+|---------------|---------------|
+| 192.168.1.100  | 255.255.255.0  |
 
-After this, close and reopen the wired settings, now you should see something like this:
+- After this, disconnect and reconnect the ethernet cable. Now you should see something like this:
 
 ![Terminal Preview](rover-communication_setup/assets/ethernet_config1.png)
 
 ---
-# 🛠️ Procedure
+# 🛠️ Check the Network Configuration
 
 Currently we have our laptop connected to base station's ROCKET M2
 
@@ -37,13 +55,13 @@ To verify this, open terminal and run:
 ```bash
 hostname -I
 ```
-In terminal you should see something like this:
+In terminal you should see an address like this:
 ```bash
 192.168.1.100
 ```
 
-The jetson(in this case, nano) is also connected to a ROCKET M2
-Similary, to verify/access its ip address, run this in the nano:
+The Jetson is also connected to another ROCKET M2.
+Similary, to verify/access its ip address, run this in the Jetson:
 ```bash
 hostname -I
 ```
@@ -55,9 +73,9 @@ You should see something like this:
 
 ## 📱💻 Ping
 
-Now we want to verify that both our jetson nano and laptop(base station) is connected to the same network.
+Now we want to verify that both our jetson nano and laptop (base station) is connected to the same network.
 For this, we'll try to ping the jetson using our laptop.
-Run:
+On the base station, run in a terminal:
 ```bash
 ping 192.168.1.2
 ```
@@ -67,16 +85,15 @@ Upon successful ping, you should see something like this:
 ---
 ![Terminal Preview](rover-communication_setup/assets/ping_jetson.png)
 
-⚠️ Remember, our base station(i.e. laptop) ip address is 192.168.1.100
-
-If you see the above output, you can safely rest assure that your jetson and base station is connected in the same network.
+>⚠️ Remember, our base station(i.e. laptop) ip address is `192.168.1.100`.\\
+>If you see the above output, you can rest assure that your jetson and base station is connected in the same network.
 
 ## 📱💻 SSH
 
 Now that both our jetson nano and the base station(laptop) are in the same network,
 we can access the jetson(that is situated in the rover) by a process called 'ssh'
 
-WRITE THIS IN YOUR TERMINAL:
+WRITE THIS IN A BASE STATION TERMINAL:
 
 ```bash
 ssh interplanetar@192.168.1.2
@@ -113,11 +130,12 @@ Now start the container:
 ```bash
 docker start -i humble-nano
 ```
+> **NOTE:** The name is set for the container when it was run for the first time in the Jetson Nano, and the name may vary between different containers.
 ---
 ![Terminal Preview](rover-communication_setup/assets/docker_ros_humble.png)
 
 ---
-On successful running, you should see the username getting changed to roverNano which tells us that we indeed are now inside the ros2 humble container, and now we can do all sorts of stuff that we want using ROS2
+On successful running, you should see the username getting changed to `roverNano`, which tells us that we indeed are now inside the ros2 humble container, and now we can do all sorts of stuff that we want using ROS2.
 
 ---
 ## Running a node in Laptop i.e. Base station
@@ -148,4 +166,3 @@ ros2 topic list
 See, they are the same topic that are in the laptop i.e. base station. Which tells us that our jetson can now access those same topic.
 
 ![Terminal Preview](rover-communication_setup/assets/docker_ros_humble.png)
-
